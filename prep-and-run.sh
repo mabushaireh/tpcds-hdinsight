@@ -2,9 +2,8 @@
 
 #Variables
 CLUSTER_NAME="mas433-nonesp-wasb-707"
-AMBARI_USER="hduser"
+AMBARI_USER=$1
 
-read -sp 'Ambari Password: ' AMBARI_PASSWORD
 
 #Constants
 SLEEP_SEC=10
