@@ -4,6 +4,7 @@
 CLUSTER_NAME="mas433-nonesp-wasb-707"
 AMBARI_USER=$1
 
+echo $1
 
 #Constants
 SLEEP_SEC=10
