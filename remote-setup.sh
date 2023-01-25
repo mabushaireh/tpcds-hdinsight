@@ -7,4 +7,4 @@ read -sp 'SSH Password: ' SSH_PASSWORD
 read -sp 'Ambari Password: ' AMBARI_PASSWORD
 
 
-sshpass -p $SSH_PASSWORD ssh $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" <./prep-and-run.sh $AMBARI_PASSWORD
+sshpass -vvv -p $SSH_PASSWORD ssh -vvv $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" <./prep-and-run.sh $AMBARI_PASSWORD
