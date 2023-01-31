@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with wss as
 (
     select d_week_seq

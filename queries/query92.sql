@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select sum(ws_ext_discount_amt) as `Excess Discount Amount` 
 from web_sales 
     ,item ,date_dim 

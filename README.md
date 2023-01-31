@@ -8,12 +8,12 @@ Goal of this project is to help generate TPCDS data with hive and create your ow
 4. Presto
 
 
-## How to use with Hive CLI
+## How to use
 
 1. Clone this repo.
 
     ```shell
-    git clone https://github.com/hdinsight/tpcds-hdinsight/ && cd tpcds-hdinsight
+    git clone https://github.com/mabushaireh/tpcds-hdinsight && cd tpcds-hdinsight
     ```
 2. Run TPCDSDataGen.hql with settings.hql file and set the required config variables.
     ```shell

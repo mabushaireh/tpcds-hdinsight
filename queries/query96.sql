@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select  count(*) as c
 from store_sales
     ,household_demographics 

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #Variables
-CLUSTER_NAME="mas433-nonesp-wasb-707"
-AMBARI_USER="hduser"
+CLUSTER_NAME="mas0207-wasb"
+AMBARI_USER="admin"
 AMBARI_PASSWORD=$1
 
 #Constants
@@ -89,4 +89,4 @@ hdfs dfs -copyFromLocal resources /tmp
 /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
 /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc 
 
-for f in queries/*.sql; do for i in {1..1} ; do STARTTIME="`date +%s`";  /usr/bin/hive -i settings.hql -f $f  > $f.run_$i.out 2>&1 ; SUCCESS=$? ; ENDTIME="`date +%s`"; echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME-$STARTTIME))" >> times_orc.csv; done; done;
+for f in queries/*.sql; do for i in {1..1} ; do STARTTIME="`date +%s`";  /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc  > $f.run_$i.out 2>&1 ; SUCCESS=$? ; ENDTIME="`date +%s`"; echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME-$STARTTIME))" >> times_orc.csv; done; done;

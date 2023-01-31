@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
 ws_wh as
 (

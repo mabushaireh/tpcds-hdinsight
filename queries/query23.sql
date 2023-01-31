@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
     frequent_ss_items
     as

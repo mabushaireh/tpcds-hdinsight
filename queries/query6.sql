@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select a.ca_state state
     , count(*) cnt
 from customer_address a 

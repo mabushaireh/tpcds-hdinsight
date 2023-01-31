@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with ws as 
 (
     select d_year as ws_sold_year

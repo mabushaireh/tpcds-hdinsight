@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select *
 from (
     select w_warehouse_name

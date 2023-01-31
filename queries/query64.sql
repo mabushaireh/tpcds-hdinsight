@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
 cs_ui as
 (

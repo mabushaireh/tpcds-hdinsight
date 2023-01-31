@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select substr(r_reason_desc,1,20) as r
     ,avg(ws_quantity) wq
     ,avg(wr_refunded_cash) ref

@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
     year_total
     as

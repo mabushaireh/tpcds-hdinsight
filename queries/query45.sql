@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select ca_zip
     , ca_county
     , sum(ws_sales_price) 

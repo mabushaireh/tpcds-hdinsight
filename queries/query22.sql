@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select i_product_name
     , i_brand
     , i_class

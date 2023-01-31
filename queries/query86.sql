@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select sum(ws_net_paid) as total_sum 
     , i_category 
     , i_class 

@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with my_customers as
 (
     select distinct c_customer_sk 

@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with inv as
     (
         select w_warehouse_name

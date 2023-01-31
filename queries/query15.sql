@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select  ca_zip
        ,sum(cs_sales_price)
  from catalog_sales

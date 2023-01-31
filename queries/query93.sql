@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select ss_customer_sk
     ,sum(act_sales) sumsales
 from (

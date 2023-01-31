@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select  i_item_id
     ,i_item_desc
     ,s_state

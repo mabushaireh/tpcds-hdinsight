@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select channel
     , col_name
     , d_year

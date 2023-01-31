@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with ss as
 (
     select i_item_id

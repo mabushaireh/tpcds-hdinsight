@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select sum (ss_quantity)
 from store_sales
     , store

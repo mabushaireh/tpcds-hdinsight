@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select  * 
 from (
     select i_manager_id

@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select count(*)
 from (
         select distinct c_last_name

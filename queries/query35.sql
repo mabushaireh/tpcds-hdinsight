@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select ca_state
     , cd_gender
     , cd_marital_status

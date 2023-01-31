@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select s_store_name 
     , s_company_id 
     , s_street_number 

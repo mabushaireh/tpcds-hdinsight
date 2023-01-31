@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select 'web' as channel
     ,web.item
     ,web.return_ratio

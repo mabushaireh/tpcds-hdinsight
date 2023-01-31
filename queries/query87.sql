@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select count(*)
 from (            
         (

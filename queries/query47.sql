@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with v1 as
 (
     select i_category

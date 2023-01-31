@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
 bucket1q as
 (

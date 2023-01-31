@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 WITH all_sales AS 
 (
     SELECT d_year

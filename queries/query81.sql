@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
 customer_total_return as
 (

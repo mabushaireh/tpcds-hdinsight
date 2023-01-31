@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select i_item_desc
     ,w_warehouse_name
     ,d1.d_week_seq

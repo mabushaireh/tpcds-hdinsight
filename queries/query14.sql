@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 with
     cross_items
     as

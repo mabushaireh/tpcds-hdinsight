@@ -1,3 +1,5 @@
+USE ${hiveconf:ORCDBNAME};
+
 select substr(w_warehouse_name,1,20) ws 
     , sm_type 
     , web_name 
