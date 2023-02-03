@@ -82,11 +82,12 @@ else
 fi
 
 if [ $IS_ESP = 'Y' ]; then
+  sudo su hive
+
   echo "Copy resources files to hdf tmp folder!"
 
   hdfs dfs -copyFromLocal resources /tmp
 
-  sudo su hive
   echo "Generate Data!"
   /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
   echo "Create External Tables!"
