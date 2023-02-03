@@ -26,13 +26,17 @@ cd repos
 
 if [ -d "tpcds-hdinsight" ]; then
   echo "Directory tpcds-hdinsight exists."
-  sudo rm -r tpcds-hdinsight
+  rm -r tpcds-hdinsight
 fi
 
 echo "Clone tpcds-hdinsight"
 git clone https://github.com/mabushaireh/tpcds-hdinsight.git
 
 cd tpcds-hdinsight
+
+if [ $IS_ESP = 'Y' ]; then
+  exit
+fi
 
 config=$(sudo /var/lib/ambari-server/resources/scripts/configs.py -p 8080 -a get -l headnodehost -c hive-site -n $CLUSTER_NAME -k "hive.security.authorization.sqlstd.confwhitelist.append" -u $AMBARI_USER -p "$AMBARI_PASSWORD" | grep $WHITELIST)
 
@@ -86,8 +90,9 @@ else
 fi
 
 if [ $IS_ESP = 'Y' ]; then
-  echo "Copy resources files to hdf tmp folder!"
 
+  echo "Copy resources files to hdf tmp folder!"
+  sudo su hive
   hdfs dfs -copyFromLocal resources /tmp
 
   echo "Generate Data!"
