@@ -10,6 +10,10 @@ IS_ESP=$4
 SLEEP_SEC=10
 WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events"
 
+if [ $IS_ESP = 'Y' ]; then
+  sudo su hive
+fi
+
 echo "Create Directories"
 
 if [ -d "repos" ]; then
@@ -82,8 +86,6 @@ else
 fi
 
 if [ $IS_ESP = 'Y' ]; then
-  sudo su hive
-
   echo "Copy resources files to hdf tmp folder!"
 
   hdfs dfs -copyFromLocal resources /tmp
