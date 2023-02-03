@@ -81,18 +81,20 @@ else
   echo "Whiteliest already applied!"
 fi
 
-echo "Copy resources files to hdf tmp folder!"
-
 if [ $IS_ESP = 'Y' ]; then
+  echo "Copy resources files to hdf tmp folder!"
+
+  hdfs dfs -copyFromLocal resources /tmp
+
   sudo su hive
   echo "Generate Data!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
+  /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
   echo "Create External Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
+  /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
   echo "Create ORC Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
+  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
   echo "Analyze Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
+  /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
 
   echo "Run Queries Tables!"
   for f in queries/*.sql; do for i in {1..1}; do
@@ -103,6 +105,8 @@ if [ $IS_ESP = 'Y' ]; then
     echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
   done; done
 else
+  echo "Copy resources files to hdf tmp folder!"
+
   hdfs dfs -copyFromLocal resources /tmp
 
   echo "Generate Data!"
