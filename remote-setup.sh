@@ -1,12 +1,12 @@
 #Variables
-read -sp 'Cluster DNS Name: ' CLUSTER_NAME
+read -p 'Cluster DNS Name: ' CLUSTER_NAME
 echo ""
 
-read -sp 'SSH User: ' SSH_USER
+read -p 'SSH User: ' SSH_USER
 echo ""
 read -sp 'SSH Password: ' SSH_PASSWORD
 echo ""
-read -sp 'Ambari User: ' AMBARI_USER
+read -p 'Ambari User: ' AMBARI_USER
 echo ""
 read -sp 'Ambari Password: ' AMBARI_PASSWORD
 echo ""
