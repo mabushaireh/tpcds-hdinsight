@@ -2,7 +2,7 @@
 
 #Variables
 CLUSTER_NAME="mas0207-wasb"
-AMBARI_USER="admin"
+AMBARI_USER="hduser"
 AMBARI_PASSWORD=$1
 
 #Constants
@@ -21,7 +21,7 @@ cd repos
 
 if [ -d "tpcds-hdinsight" ]; then
   echo "Directory tpcds-hdinsight exists."
-  rm -r tpcds-hdinsight
+  sudo rm -r tpcds-hdinsight
 fi
 
 echo "Clone tpcds-hdinsight"
