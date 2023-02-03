@@ -4,10 +4,11 @@
 CLUSTER_NAME=$1
 AMBARI_USER=$2
 AMBARI_PASSWORD=$3
+IS_ESP=$4
 
 #Constants
 SLEEP_SEC=10
-WHITELIST="hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events"
+WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events"
 
 echo "Create Directories"
 
@@ -28,8 +29,6 @@ echo "Clone tpcds-hdinsight"
 git clone https://github.com/mabushaireh/tpcds-hdinsight.git
 
 cd tpcds-hdinsight
-
-
 
 config=$(sudo /var/lib/ambari-server/resources/scripts/configs.py -p 8080 -a get -l headnodehost -c hive-site -n $CLUSTER_NAME -k "hive.security.authorization.sqlstd.confwhitelist.append" -u $AMBARI_USER -p "$AMBARI_PASSWORD" | grep $WHITELIST)
 
@@ -82,11 +81,45 @@ else
   echo "Whiteliest already applied!"
 fi
 
-hdfs dfs -copyFromLocal resources /tmp
+echo "Copy resources files to hdf tmp folder!"
 
-/usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=`grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*"`/tmp/resources  
-/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
-/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
-/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc 
+if [ $IS_ESP = 'Y' ]; then
+  sudo su hive
+  echo "Generate Data!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
+  echo "Create External Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
+  echo "Create ORC Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
+  echo "Analyze Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
 
-for f in queries/*.sql; do for i in {1..1} ; do STARTTIME="`date +%s`";  /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc  > $f.run_$i.out 2>&1 ; SUCCESS=$? ; ENDTIME="`date +%s`"; echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME-$STARTTIME))" >> times_orc.csv; done; done;
+  echo "Run Queries Tables!"
+  for f in queries/*.sql; do for i in {1..1}; do
+    STARTTIME="$(date +%s)"
+    /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc >$f.run_$i.out 2>&1
+    SUCCESS=$?
+    ENDTIME="$(date +%s)"
+    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
+  done; done
+else
+  hdfs dfs -copyFromLocal resources /tmp
+
+  echo "Generate Data!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
+  echo "Create External Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
+  echo "Create ORC Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
+  echo "Analyze Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
+
+  echo "Run Queries Tables!"
+  for f in queries/*.sql; do for i in {1..1}; do
+    STARTTIME="$(date +%s)"
+    /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc >$f.run_$i.out 2>&1
+    SUCCESS=$?
+    ENDTIME="$(date +%s)"
+    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
+  done; done
+fi
