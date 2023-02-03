@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #Variables
-CLUSTER_NAME="mas0207-wasb"
-AMBARI_USER="hduser"
-AMBARI_PASSWORD=$1
+CLUSTER_NAME=$1
+AMBARI_USER=$2
+AMBARI_PASSWORD=$3
 
 #Constants
 SLEEP_SEC=10
