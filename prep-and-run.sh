@@ -12,6 +12,7 @@ WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduc
 
 if [ $IS_ESP = 'Y' ]; then
   sudo su hive
+  cd ~
 fi
 
 echo "Create Directories"
