@@ -15,4 +15,4 @@ read -sp 'Ambari Password: ' AMBARI_PASSWORD
 echo ""
 
 
-sshpass -p $SSH_PASSWORD ssh $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" <./prep-and-run.sh $CLUSTER_NAME $AMBARI_USER $AMBARI_PASSWORD $IS_ESP
+sshpass -p $SSH_PASSWORD ssh $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" <./prep-and-run.sh $CLUSTER_NAME $AMBARI_USER $AMBARI_PASSWORD $IS_ESP $SSH_USER

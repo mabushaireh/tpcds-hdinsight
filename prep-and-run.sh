@@ -5,15 +5,11 @@ CLUSTER_NAME=$1
 AMBARI_USER=$2
 AMBARI_PASSWORD=$3
 IS_ESP=$4
+SSH_USER=$5
 
 #Constants
 SLEEP_SEC=10
 WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events"
-
-if [ $IS_ESP = 'Y' ]; then
-  sudo su hive
-  cd ~
-fi
 
 echo "Create Directories"
 
@@ -21,6 +17,10 @@ if [ -d "repos" ]; then
   echo "Directory repos exists."
 else
   mkdir repos
+fi
+
+if [ $IS_ESP = 'Y' ]; then
+  sudo chmod a+rwx repos
 fi
 
 cd repos
@@ -34,10 +34,6 @@ echo "Clone tpcds-hdinsight"
 git clone https://github.com/mabushaireh/tpcds-hdinsight.git
 
 cd tpcds-hdinsight
-
-if [ $IS_ESP = 'Y' ]; then
-  exit
-fi
 
 config=$(sudo /var/lib/ambari-server/resources/scripts/configs.py -p 8080 -a get -l headnodehost -c hive-site -n $CLUSTER_NAME -k "hive.security.authorization.sqlstd.confwhitelist.append" -u $AMBARI_USER -p "$AMBARI_PASSWORD" | grep $WHITELIST)
 
@@ -90,31 +86,22 @@ else
   echo "Whiteliest already applied!"
 fi
 
+echo "Copy resources files to hdf tmp folder!"
 if [ $IS_ESP = 'Y' ]; then
-
-  echo "Copy resources files to hdf tmp folder!"
-  sudo su hive
+sudo -i -u hive bash << EOF
+  whoami
+  echo "Switch to hive user, this is ESP cluster"
+  cd /home/$SSH_USER/repos/tpcds-hdinsight
   hdfs dfs -copyFromLocal resources /tmp
-
   echo "Generate Data!"
-  /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
-  echo "Create External Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
-  echo "Create ORC Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
-  echo "Analyze Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
 
-  echo "Run Queries Tables!"
-  for f in queries/*.sql; do for i in {1..1}; do
-    STARTTIME="$(date +%s)"
-    /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc >$f.run_$i.out 2>&1
-    SUCCESS=$?
-    ENDTIME="$(date +%s)"
-    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
-  done; done
+  /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
+  
+EOF
+  echo "going back to normal user"
+  whoami
 else
-  echo "Copy resources files to hdf tmp folder!"
+  
 
   hdfs dfs -copyFromLocal resources /tmp
 
