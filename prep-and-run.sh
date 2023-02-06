@@ -94,9 +94,9 @@ if [ $IS_ESP = 'Y' ]; then
   cd /home/$SSH_USER/repos/tpcds-hdinsight
   hdfs dfs -copyFromLocal resources /tmp
   echo "Generate Data!"
-  /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources
+  #/usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources
  echo "Create External Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
+  #/usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
   echo "Create ORC Tables!"
   /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
   echo "Analyze Tables!"

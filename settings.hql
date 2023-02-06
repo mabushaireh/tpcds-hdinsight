@@ -8,3 +8,6 @@ set hive.tez.java.opts=-Xmx6476m; -- 0.8 * hive.tez.container.size
 set hive.tez.container.size=8096;
 set tez.runtime.io.sort.mb=3238; -- 0.4 * hive.tez.container.size
 set tez.runtime.unordered.output.buffer.size-mb=809; --0.1 * hive.tez.container.size
+set hive.map.aggr=false;
+set tez.grouping.max-size=32000000; --bigger files will be splitted
+set tez.grouping.min-size=32000;    --smaller files will be combined on single mapper
