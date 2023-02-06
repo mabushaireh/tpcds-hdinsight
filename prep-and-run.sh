@@ -9,7 +9,7 @@ SSH_USER=$5
 
 #Constants
 SLEEP_SEC=10
-WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|PARTS|SCALE|TPCHBIN|LOCATION|"
+WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size"
 
 echo "Create Directories"
 
