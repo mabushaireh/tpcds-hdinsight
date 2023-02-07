@@ -1,9 +1,9 @@
-set hive.query.name=${hiveconf:QUERY};
+set hive.query.name=${hivevar:QUERY};
 
-DROP DATABASE IF EXISTS ${hiveconf:TEXTDBNAME}  CASCADE;
-CREATE DATABASE IF NOT EXISTS ${hiveconf:TEXTDBNAME} ;
+DROP DATABASE IF EXISTS ${hivevar:TEXTDBNAME}  CASCADE;
+CREATE DATABASE IF NOT EXISTS ${hivevar:TEXTDBNAME} ;
 
-USE ${hiveconf:TEXTDBNAME} ;
+USE ${hivevar:TEXTDBNAME} ;
 
 drop table if exists inventory;
 
@@ -22,7 +22,7 @@ select
     i.inv_warehouse_sk,
     i.inv_quantity_on_hand,
     i.inv_date_sk
-  from ${hiveconf:SOURCE}.inventory i;
+  from ${hivevar:SOURCE}.inventory i;
 
 
 drop table if exists catalog_returns;
@@ -59,7 +59,7 @@ create table catalog_returns
 partitioned by (cr_returned_date_sk bigint)
 ;
 
-from ${hiveconf:SOURCE}.catalog_returns cr
+from ${hivevar:SOURCE}.catalog_returns cr
 insert overwrite table catalog_returns partition(cr_returned_date_sk) 
 select
         cr.cr_returned_time_sk,
@@ -165,7 +165,7 @@ create table catalog_sales
 partitioned by (cs_sold_date_sk bigint)
 ;
 
-from ${hiveconf:SOURCE}.catalog_sales cs
+from ${hivevar:SOURCE}.catalog_sales cs
 insert overwrite table catalog_sales partition (cs_sold_date_sk) 
 select
         cs.cs_sold_time_sk,
@@ -270,7 +270,7 @@ create table store_returns
 partitioned by (sr_returned_date_sk bigint)
 ;
 
-from ${hiveconf:SOURCE}.store_returns sr
+from ${hivevar:SOURCE}.store_returns sr
 insert overwrite table store_returns partition (sr_returned_date_sk) 
 select
         sr.sr_return_time_sk,
@@ -350,7 +350,7 @@ create table store_sales
 partitioned by (ss_sold_date_sk bigint)
 ;
 
-from ${hiveconf:SOURCE}.store_sales ss
+from ${hivevar:SOURCE}.store_sales ss
 insert overwrite table store_sales partition (ss_sold_date_sk) 
 select
         ss.ss_sold_time_sk,
@@ -437,7 +437,7 @@ create table web_returns
 partitioned by (wr_returned_date_sk       bigint)
 ;
 
-from ${hiveconf:SOURCE}.web_returns wr
+from ${hivevar:SOURCE}.web_returns wr
 insert overwrite table web_returns partition (wr_returned_date_sk)
 select
         wr.wr_returned_time_sk,
@@ -536,7 +536,7 @@ create table web_sales
 partitioned by (ws_sold_date_sk           bigint)
 ;
 
-from ${hiveconf:SOURCE}.web_sales ws
+from ${hivevar:SOURCE}.web_sales ws
 insert overwrite table web_sales partition (ws_sold_date_sk) 
 select
         ws.ws_sold_time_sk,
@@ -619,101 +619,101 @@ drop table if exists call_center;
 
 create table call_center
 
-as select * from ${hiveconf:SOURCE}.call_center;
+as select * from ${hivevar:SOURCE}.call_center;
 
 drop table if exists catalog_page;
 
 create table catalog_page
 
-as select * from ${hiveconf:SOURCE}.catalog_page;
+as select * from ${hivevar:SOURCE}.catalog_page;
 
 drop table if exists customer;
 
 create table customer
 
-as select * from ${hiveconf:SOURCE}.customer;
+as select * from ${hivevar:SOURCE}.customer;
 
 drop table if exists customer_address;
 
 create table customer_address
 
-as select * from ${hiveconf:SOURCE}.customer_address;
+as select * from ${hivevar:SOURCE}.customer_address;
 
 
 drop table if exists customer_demographics;
 
 create table customer_demographics
 
-as select * from ${hiveconf:SOURCE}.customer_demographics;
+as select * from ${hivevar:SOURCE}.customer_demographics;
 
 drop table if exists date_dim;
 
 create table date_dim
 
-as select * from ${hiveconf:SOURCE}.date_dim;
+as select * from ${hivevar:SOURCE}.date_dim;
 
 drop table if exists household_demographics;
 
 create table household_demographics
 
-as select * from ${hiveconf:SOURCE}.household_demographics;
+as select * from ${hivevar:SOURCE}.household_demographics;
 
 drop table if exists income_band;
 
 create table income_band
 
-as select * from ${hiveconf:SOURCE}.income_band;
+as select * from ${hivevar:SOURCE}.income_band;
 
 drop table if exists item;
 
 create table item
 
-as select * from ${hiveconf:SOURCE}.item;
+as select * from ${hivevar:SOURCE}.item;
 
 drop table if exists promotion;
 
 create table promotion
 
-as select * from ${hiveconf:SOURCE}.promotion;
+as select * from ${hivevar:SOURCE}.promotion;
 
 drop table if exists reason;
 
 create table reason
 
-as select * from ${hiveconf:SOURCE}.reason;
+as select * from ${hivevar:SOURCE}.reason;
 
 drop table if exists ship_mode;
 
 create table ship_mode
 
-as select * from ${hiveconf:SOURCE}.ship_mode;
+as select * from ${hivevar:SOURCE}.ship_mode;
 
 drop table if exists store;
 
 create table store
 
-as select * from ${hiveconf:SOURCE}.store;
+as select * from ${hivevar:SOURCE}.store;
 
 drop table if exists time_dim;
 
 create table time_dim
 
-as select * from ${hiveconf:SOURCE}.time_dim;
+as select * from ${hivevar:SOURCE}.time_dim;
 
 drop table if exists warehouse;
 
 create table warehouse
 
-as select * from ${hiveconf:SOURCE}.warehouse;
+as select * from ${hivevar:SOURCE}.warehouse;
 
 drop table if exists web_page;
 
 create table web_page
 
-as select * from ${hiveconf:SOURCE}.web_page;
+as select * from ${hivevar:SOURCE}.web_page;
 
 drop table if exists web_site;
 
 create table web_site
 
-as select * from ${hiveconf:SOURCE}.web_site;
+as select * from ${hivevar:SOURCE}.web_site;

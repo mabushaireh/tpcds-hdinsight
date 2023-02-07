@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS ${hiveconf:DBNAME} CASCADE;
-CREATE DATABASE IF NOT EXISTS ${hiveconf:DBNAME};
+DROP DATABASE IF EXISTS ${hivevar:DBNAME} CASCADE;
+CREATE DATABASE IF NOT EXISTS ${hivevar:DBNAME};
 
-USE ${hiveconf:DBNAME};
+USE ${hivevar:DBNAME};
 
 drop table if exists call_center;
 
@@ -39,7 +39,7 @@ create external table call_center(
 ,     cc_tax_percentage         double
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/call_center';
+location '${hivevar:LOCATION}/call_center';
 
 drop table if exists catalog_page;
 create external table catalog_page(
@@ -54,7 +54,7 @@ create external table catalog_page(
 ,     cp_type                   string
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/catalog_page';
+location '${hivevar:LOCATION}/catalog_page';
 
 
 drop table if exists catalog_returns;
@@ -90,7 +90,7 @@ create external table catalog_returns
     cr_net_loss               double
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/catalog_returns';
+location '${hivevar:LOCATION}/catalog_returns';
 
 
 drop table if exists catalog_sales;
@@ -133,7 +133,7 @@ create external table catalog_sales
     cs_net_profit             double
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/catalog_sales';
+location '${hivevar:LOCATION}/catalog_sales';
 
 
 drop table if exists customer_address;
@@ -155,7 +155,7 @@ create external table customer_address
     ca_location_type          string
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/customer_address';
+location '${hivevar:LOCATION}/customer_address';
 
 
 drop table if exists customer_demographics;
@@ -173,7 +173,7 @@ create external table customer_demographics
     cd_dep_college_count      int 
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/customer_demographics';
+location '${hivevar:LOCATION}/customer_demographics';
 
 
 drop table if exists customer;
@@ -200,7 +200,7 @@ create external table customer
     c_last_review_date        string
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/customer';
+location '${hivevar:LOCATION}/customer';
 
 
 drop table if exists date_dim;
@@ -237,7 +237,7 @@ create external table date_dim
     d_current_year            string 
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/date_dim';
+location '${hivevar:LOCATION}/date_dim';
 
 
 drop table if exists household_demographics;
@@ -251,7 +251,7 @@ create external table household_demographics
     hd_vehicle_count          int
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/household_demographics';
+location '${hivevar:LOCATION}/household_demographics';
 
 
 drop table if exists income_band;
@@ -262,7 +262,7 @@ create external table income_band(
 ,     ib_upper_bound            int
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/income_band';
+location '${hivevar:LOCATION}/income_band';
 
 
 drop table if exists inventory;
@@ -275,7 +275,7 @@ create external table inventory
     inv_quantity_on_hand int
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/inventory';
+location '${hivevar:LOCATION}/inventory';
 
 
 drop table if exists item;
@@ -306,7 +306,7 @@ create external table item
     i_product_name            string
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/item';
+location '${hivevar:LOCATION}/item';
 
 
 drop table if exists promotion;
@@ -334,7 +334,7 @@ create external table promotion
     p_discount_active         string 
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/promotion';
+location '${hivevar:LOCATION}/promotion';
 
 
 drop table if exists reason;
@@ -345,7 +345,7 @@ create external table reason(
 ,     r_reason_desc             string                
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/reason';
+location '${hivevar:LOCATION}/reason';
 
 
 drop table if exists ship_mode;
@@ -359,7 +359,7 @@ create external table ship_mode(
 ,     sm_contract               string                      
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/ship_mode';
+location '${hivevar:LOCATION}/ship_mode';
 
 
 drop table if exists store_returns;
@@ -388,7 +388,7 @@ create external table store_returns
     sr_net_loss               double             
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/store_returns';
+location '${hivevar:LOCATION}/store_returns';
 
 
 drop table if exists store_sales;
@@ -420,7 +420,7 @@ create external table store_sales
     ss_net_profit             double                  
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/store_sales';
+location '${hivevar:LOCATION}/store_sales';
 
 
 drop table if exists store;
@@ -458,7 +458,7 @@ create external table store
     s_tax_precentage          double                  
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/store';
+location '${hivevar:LOCATION}/store';
 
 
 drop table if exists time_dim;
@@ -477,7 +477,7 @@ create external table time_dim
     t_meal_time               string
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/time_dim';
+location '${hivevar:LOCATION}/time_dim';
 
 
 drop table if exists warehouse;
@@ -499,7 +499,7 @@ create external table warehouse(
 ,     w_gmt_offset              double                  
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/warehouse';
+location '${hivevar:LOCATION}/warehouse';
 
 
 drop table if exists web_page;
@@ -521,7 +521,7 @@ create external table web_page(
 ,     wp_max_ad_count           int
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/web_page';
+location '${hivevar:LOCATION}/web_page';
 
 
 drop table if exists web_returns;
@@ -554,7 +554,7 @@ create external table web_returns
     wr_net_loss               double
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/web_returns';
+location '${hivevar:LOCATION}/web_returns';
 
 
 drop table if exists web_sales;
@@ -597,7 +597,7 @@ create external table web_sales
     ws_net_profit             double
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/web_sales';
+location '${hivevar:LOCATION}/web_sales';
 
 
 drop table if exists web_site;
@@ -632,4 +632,4 @@ create external table web_site
     web_tax_percentage    double
 )
 row format delimited fields terminated by '|' 
-location '${hiveconf:LOCATION}/web_site';
+location '${hivevar:LOCATION}/web_site';

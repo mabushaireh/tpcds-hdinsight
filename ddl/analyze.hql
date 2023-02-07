@@ -1,6 +1,6 @@
-set hive.query.name=${hiveconf:QUERY};
+set hive.query.name=${hivevar:QUERY};
 
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 analyze table call_center compute statistics for columns;
 analyze table catalog_page compute statistics for columns;

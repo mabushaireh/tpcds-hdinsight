@@ -9,7 +9,7 @@ SSH_USER=$5
 
 #Constants
 SLEEP_SEC=10
-WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb"
+WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|SOURCE|DBNAME|LOCATION|QUERY|ORCDBNAME|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
 
 echo "Create Directories"
 
@@ -94,11 +94,11 @@ if [ $IS_ESP = 'Y' ]; then
   cd /home/$SSH_USER/repos/tpcds-hdinsight
   hdfs dfs -copyFromLocal resources /tmp
   echo "Generate Data!"
-  /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hiveconf QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
+  #/usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hiveconf QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
  echo "Create External Tables!"
   /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds --hiveconf QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Create ORC Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds--hiveconf QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds--hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Tables!"
   /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc --hiveconf QUERY=analyze_$(date '+%Y%m%d_%H%M%S')
 
