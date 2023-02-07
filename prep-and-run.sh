@@ -94,14 +94,22 @@ if [ $IS_ESP = 'Y' ]; then
   cd /home/$SSH_USER/repos/tpcds-hdinsight
   hdfs dfs -copyFromLocal resources /tmp
   echo "Generate Data!"
-  #/usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources
+  /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hiveconf QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
  echo "Create External Tables!"
-  #/usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
+  /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds --hiveconf hive.session.id=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Create ORC Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
+  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds --hiveconf hive.session.id=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
- 
+  /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc --hiveconf hive.session.id=analyze_$(date '+%Y%m%d_%H%M%S')
+
+echo "Run Queries Tables!"
+  for f in queries/*.sql; do for i in {1..1}; do
+    STARTTIME="$(date +%s)"
+    /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc --hiveconf hive.session.id=$f_$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+    SUCCESS=$?
+    ENDTIME="$(date +%s)"
+    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
+  done; done 
 EOF
   echo "going back to normal user"
   whoami
@@ -110,13 +118,13 @@ else
   hdfs dfs -copyFromLocal resources /tmp
 
   echo "Generate Data!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources
+  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "wasb[^<]*")/tmp/resources --hiveconf hive.session.id=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds --hiveconf hive.session.id=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Create ORC Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds --hiveconf hive.session.id=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc --hiveconf hive.session.id=analyze_$(date '+%Y%m%d_%H%M%S')
 
   echo "Run Queries Tables!"
   for f in queries/*.sql; do for i in {1..1}; do
