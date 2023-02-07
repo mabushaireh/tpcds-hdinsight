@@ -102,14 +102,7 @@ if [ $IS_ESP = 'Y' ]; then
   echo "Analyze Tables!"
   /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc --hiveconf hive.session.id=analyze_$(date '+%Y%m%d_%H%M%S')
 
-echo "Run Queries Tables!"
-  for f in queries/*.sql; do for i in {1..1}; do
-    STARTTIME="$(date +%s)"
-    /usr/bin/hive -i settings.hql -f $f -hiveconf ORCDBNAME=tpcds_orc --hiveconf hive.session.id=$f_$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
-    SUCCESS=$?
-    ENDTIME="$(date +%s)"
-    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
-  done; done 
+
 EOF
   echo "going back to normal user"
   whoami
