@@ -11,3 +11,5 @@ set tez.runtime.unordered.output.buffer.size-mb=1310; --0.1 * hive.tez.container
 set hive.map.aggr=false;
 set tez.grouping.max-size=16000000; --bigger files will be splitted
 set tez.grouping.min-size=16000;    --smaller files will be combined on single mapper
+set hive.auto.convert.join=false;
+set hive.auto.convert.join.noconditionaltask=false;
