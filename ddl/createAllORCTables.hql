@@ -1,3 +1,5 @@
+set hive.query.name=${hiveconf:QUERY};
+
 DROP DATABASE IF EXISTS ${hiveconf:ORCDBNAME} CASCADE;
 CREATE DATABASE IF NOT EXISTS ${hiveconf:ORCDBNAME};
 

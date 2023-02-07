@@ -96,12 +96,11 @@ if [ $IS_ESP = 'Y' ]; then
   echo "Generate Data!"
   /usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hiveconf SCALE=2 -hiveconf PARTS=10 -hiveconf LOCATION=/HiveTPCDS/ -hiveconf TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hiveconf QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
  echo "Create External Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds --hiveconf hive.session.id=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql -hiveconf LOCATION=/HiveTPCDS/ -hiveconf DBNAME=tpcds --hiveconf QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Create ORC Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds --hiveconf hive.session.id=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql -hiveconf ORCDBNAME=tpcds_orc -hiveconf SOURCE=tpcds--hiveconf QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc --hiveconf hive.session.id=analyze_$(date '+%Y%m%d_%H%M%S')
-
+  /usr/bin/hive -i settings.hql -f ddl/analyze.hql -hiveconf ORCDBNAME=tpcds_orc --hiveconf QUERY=analyze_$(date '+%Y%m%d_%H%M%S')
 
 EOF
   echo "going back to normal user"

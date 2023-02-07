@@ -1,3 +1,5 @@
+set hive.query.name=${hiveconf:QUERY};
+
 USE ${hiveconf:ORCDBNAME};
 
 analyze table call_center compute statistics for columns;
