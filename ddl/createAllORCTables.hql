@@ -16,6 +16,8 @@ create table inventory
 partitioned by (inv_date_sk bigint)
 stored as ORC;
 
+set hive.query.name=${hivevar:QUERY}_inventory;
+
 insert overwrite table inventory partition (inv_date_sk)
 select
     i.inv_item_sk,
@@ -59,6 +61,7 @@ create table catalog_returns
 partitioned by (cr_returned_date_sk bigint)
 stored as ORC;
 
+set hive.query.name=${hivevar:QUERY}_catalog_returns;
 from ${hivevar:SOURCE}.catalog_returns cr
 insert overwrite table catalog_returns partition(cr_returned_date_sk) 
 select
