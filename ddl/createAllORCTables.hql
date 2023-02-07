@@ -168,6 +168,8 @@ create table catalog_sales
 partitioned by (cs_sold_date_sk bigint)
 stored as ORC;
 
+set hive.query.name=${hivevar:QUERY}_catalog_sales;
+
 from ${hivevar:SOURCE}.catalog_sales cs
 insert overwrite table catalog_sales partition (cs_sold_date_sk) 
 select
@@ -273,6 +275,8 @@ create table store_returns
 partitioned by (sr_returned_date_sk bigint)
 stored as ORC;
 
+set hive.query.name=${hivevar:QUERY}_store_returns;
+
 from ${hivevar:SOURCE}.store_returns sr
 insert overwrite table store_returns partition (sr_returned_date_sk) 
 select
@@ -352,6 +356,8 @@ create table store_sales
 )
 partitioned by (ss_sold_date_sk bigint)
 stored as ORC;
+
+set hive.query.name=${hivevar:QUERY}_store_sales;
 
 from ${hivevar:SOURCE}.store_sales ss
 insert overwrite table store_sales partition (ss_sold_date_sk) 
@@ -439,6 +445,8 @@ create table web_returns
 )
 partitioned by (wr_returned_date_sk       bigint)
 stored as ORC;
+
+set hive.query.name=${hivevar:QUERY}_web_returns;
 
 from ${hivevar:SOURCE}.web_returns wr
 insert overwrite table web_returns partition (wr_returned_date_sk)
@@ -539,6 +547,7 @@ create table web_sales
 partitioned by (ws_sold_date_sk           bigint)
 stored as ORC;
 
+set hive.query.name=${hivevar:QUERY}_web_sales;
 from ${hivevar:SOURCE}.web_sales ws
 insert overwrite table web_sales partition (ws_sold_date_sk) 
 select
@@ -620,23 +629,29 @@ select
 
 drop table if exists call_center;
 
+set hive.query.name=${hivevar:QUERY}_call_center;
+
 create table call_center
 stored as ORC
 as select * from ${hivevar:SOURCE}.call_center;
 
 drop table if exists catalog_page;
+set hive.query.name=${hivevar:QUERY}_catalog_pag;
 
 create table catalog_page
 stored as ORC
 as select * from ${hivevar:SOURCE}.catalog_page;
 
 drop table if exists customer;
+set hive.query.name=${hivevar:QUERY}_customer;
 
 create table customer
 stored as ORC
 as select * from ${hivevar:SOURCE}.customer;
 
 drop table if exists customer_address;
+
+set hive.query.name=${hivevar:QUERY}_customer_address;
 
 create table customer_address
 stored as ORC
@@ -645,77 +660,91 @@ as select * from ${hivevar:SOURCE}.customer_address;
 
 drop table if exists customer_demographics;
 
+set hive.query.name=${hivevar:QUERY}_customer_demographics;
+
 create table customer_demographics
 stored as ORC
 as select * from ${hivevar:SOURCE}.customer_demographics;
 
 drop table if exists date_dim;
 
+set hive.query.name=${hivevar:QUERY}_date_dim;
 create table date_dim
 stored as ORC
 as select * from ${hivevar:SOURCE}.date_dim;
 
 drop table if exists household_demographics;
+set hive.query.name=${hivevar:QUERY}_household_demographics;
 
 create table household_demographics
 stored as ORC
 as select * from ${hivevar:SOURCE}.household_demographics;
 
 drop table if exists income_band;
+set hive.query.name=${hivevar:QUERY}_income_band;
 
 create table income_band
 stored as ORC
 as select * from ${hivevar:SOURCE}.income_band;
 
 drop table if exists item;
+set hive.query.name=${hivevar:QUERY}_item;
 
 create table item
 stored as ORC
 as select * from ${hivevar:SOURCE}.item;
 
 drop table if exists promotion;
+set hive.query.name=${hivevar:QUERY}_promotion;
 
 create table promotion
 stored as ORC
 as select * from ${hivevar:SOURCE}.promotion;
 
 drop table if exists reason;
+set hive.query.name=${hivevar:QUERY}_reason;
 
 create table reason
 stored as ORC
 as select * from ${hivevar:SOURCE}.reason;
 
 drop table if exists ship_mode;
+set hive.query.name=${hivevar:QUERY}_ship_mode;
 
 create table ship_mode
 stored as ORC
 as select * from ${hivevar:SOURCE}.ship_mode;
 
 drop table if exists store;
+set hive.query.name=${hivevar:QUERY}_store;
 
 create table store
 stored as ORC
 as select * from ${hivevar:SOURCE}.store;
 
 drop table if exists time_dim;
+set hive.query.name=${hivevar:QUERY}_time_dim;
 
 create table time_dim
 stored as ORC
 as select * from ${hivevar:SOURCE}.time_dim;
 
 drop table if exists warehouse;
+set hive.query.name=${hivevar:QUERY}_warehouse;
 
 create table warehouse
 stored as ORC
 as select * from ${hivevar:SOURCE}.warehouse;
 
 drop table if exists web_page;
+set hive.query.name=${hivevar:QUERY}_web_page;
 
 create table web_page
 stored as ORC
 as select * from ${hivevar:SOURCE}.web_page;
 
 drop table if exists web_site;
+set hive.query.name=${hivevar:QUERY}_web_site;
 
 create table web_site
 stored as ORC
