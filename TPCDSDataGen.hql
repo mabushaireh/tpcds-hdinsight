@@ -1,6 +1,5 @@
 SET mapred.reduce.tasks=${hiveconf:PARTS} ;
-set hive.query.name="${hiveconf:QUERY}";
-set hive.session.id="${hiveconf:QUERY} TPCDSgen";
+set hive.query.name=${hiveconf:QUERY}_TPCDSgen;
 
 ADD FILE ${hiveconf:TPCHBIN}/dsdgen;
 ADD FILE ${hiveconf:TPCHBIN}/tpcds.idx;
