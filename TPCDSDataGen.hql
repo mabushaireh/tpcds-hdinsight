@@ -1,15 +1,15 @@
-SET mapred.reduce.tasks=${hiveconf:PARTS} ;
-set hive.query.name=${hiveconf:QUERY}_TPCDSgen;
+SET mapred.reduce.tasks=${hivevar:PARTS} ;
+set hive.query.name=${hivevar:QUERY}_TPCDSgen;
 
-ADD FILE ${hiveconf:TPCHBIN}/dsdgen;
-ADD FILE ${hiveconf:TPCHBIN}/tpcds.idx;
-ADD FILE ${hiveconf:TPCHBIN}/sequenceGenerator.py;
-ADD FILE ${hiveconf:TPCHBIN}/TPCDSgen.py;
+ADD FILE ${hivevar:TPCHBIN}/dsdgen;
+ADD FILE ${hivevar:TPCHBIN}/tpcds.idx;
+ADD FILE ${hivevar:TPCHBIN}/sequenceGenerator.py;
+ADD FILE ${hivevar:TPCHBIN}/TPCDSgen.py;
 
 FROM (
     SELECT TRANSFORM(x) 
-    USING 'python sequenceGenerator.py "${hiveconf:SCALE}"' AS (key INT, value STRING) 
+    USING 'python sequenceGenerator.py "${hivevar:SCALE}"' AS (key INT, value STRING) 
     FROM ( SELECT 1 x) t 
-    DISTRIBUTE BY (hash(key) % "${hiveconf:PARTS}")
+    DISTRIBUTE BY (hash(key) % "${hivevar:PARTS}")
     ) d REDUCE d.key 
-USING 'python TPCDSgen.py -s "${hiveconf:SCALE}" -o "${hiveconf:LOCATION}" -n "${hiveconf:PARTS}"' ;
+USING 'python TPCDSgen.py -s "${hivevar:SCALE}" -o "${hivevar:LOCATION}" -n "${hivevar:PARTS}"' ;

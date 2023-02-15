@@ -110,7 +110,7 @@ else
   hdfs dfs -copyFromLocal resources /tmp
 
   echo "Generate Data!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar hive.session.id=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hiveconf hive.session.id=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
   /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar hive.session.id=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Create ORC Tables!"
