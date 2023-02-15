@@ -110,18 +110,17 @@ else
   hdfs dfs -copyFromLocal resources /tmp
 
   echo "Generate Data!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hiveconf hive.session.id=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar hive.session.id=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Create ORC Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar hive.session.id=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar hive.session.id=analyze_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_$(date '+%Y%m%d_%H%M%S')
 
   echo "Run Queries Tables!"
   for f in queries/*.sql; do for i in {1..1}; do
     STARTTIME="$(date +%s)"
-    /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc >$f.run_$i.out 2>&1
+    /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
     SUCCESS=$?
     ENDTIME="$(date +%s)"
     echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
