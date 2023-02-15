@@ -1,6 +1,6 @@
-set hive.exec.max.dynamic.partitions.pernode=500;
+set hive.exec.max.dynamic.partitions.pernode=1000;
 set mapreduce.task.timeout=360000000;
-set hive.load.dynamic.partitions.thread=25;
+set hive.load.dynamic.partitions.thread=50;
 set hive.stats.autogather=false;
 set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
