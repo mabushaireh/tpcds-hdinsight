@@ -5,3 +5,7 @@ set hive.stats.autogather=false;
 set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
 set tez.grouping.max-size=536870912;
+set hive.tez.java.opts="-Xmx2048M -Xms2048M -Djava.net.preferIPv4Stack=true -XX:NewRatio=8 -XX:+UseNUMA -XX:+UseG1GC -XX:+ResizeTLAB";
+set hive.tez.container.size=3072;
+set tez.runtime.io.sort.mb=1228;
+set tez.runtime.unordered.output.buffer.size-mb=200;
