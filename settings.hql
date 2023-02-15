@@ -9,3 +9,4 @@ set hive.tez.container.size=12288;
 set hive.tez.java.opts=-Xmx9830m; -- 0.8 * hive.tez.container.size
 set tez.runtime.io.sort.mb=4915; -- 0.4 * hive.tez.container.size
 set tez.runtime.unordered.output.buffer.size-mb=1228;
+set hive.cbo.enable=false;
