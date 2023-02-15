@@ -14,3 +14,4 @@ set tez.am.launch.cmd-opts=-Xmx9830m;
 set hive.cbo.enable=false;
 set hive.input.format=org.apache.hadoop.hive.ql.io.HiveInputFormat;
 set hive.map.aggr=false;
+set tez.runtime.shuffle.memory.limit.percent=0.15;
