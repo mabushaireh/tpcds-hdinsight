@@ -4,3 +4,4 @@ set hive.load.dynamic.partitions.thread=100;
 set hive.stats.autogather=false;
 set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
+set tez.grouping.max-size=536870912;
