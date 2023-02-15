@@ -9,8 +9,7 @@ set hive.tez.container.size=8000;
 set tez.runtime.io.sort.mb=3200; -- 0.4 * hive.tez.container.size
 set tez.runtime.unordered.output.buffer.size-mb=320; --0.1 * hive.tez.container.size
 set hive.map.aggr=false;
-set tez.grouping.max-size=1000; --bigger files will be splitted
-set tez.grouping.min-size=160;  --smaller files will be combined on single mapper
+
 set hive.auto.convert.join=false;
 set hive.auto.convert.join.noconditionaltask=false;
 set hive.query.results.cache.enabled=false;
