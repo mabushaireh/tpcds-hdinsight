@@ -3,3 +3,4 @@ set hive.tez.container.size=8000;
 set tez.runtime.io.sort.mb=3200; -- 0.4 * hive.tez.container.size
 set tez.runtime.unordered.output.buffer.size-mb=320; 
 set tez.grouping.max-size=8388608;
+set tez.grouping.min-size=8388;
