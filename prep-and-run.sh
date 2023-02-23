@@ -110,14 +110,31 @@ else
   hdfs dfs -copyFromLocal resources /tmp
 
   echo "Generate Data!"
-  #/usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
-  #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Analyze Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
+  echo "Create Parquet Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
+  echo "Analyze Parquet Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
 
-  echo "Run Queries Tables!"
+  echo "Run Queries Parquet Tables!"
+  for f in queries/*.sql; do for i in {1..1}; do
+    STARTTIME="$(date +%s)"
+    /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+    SUCCESS=$?
+    ENDTIME="$(date +%s)"
+    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet.csv
+  done; done
+
+
+
+  echo "Create ORC Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
+  echo "Analyze ORC Tables!"
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_ORC_$(date '+%Y%m%d_%H%M%S')
+
+  echo "Run Queries ORC Tables!"
   for f in queries/*.sql; do for i in {1..1}; do
     STARTTIME="$(date +%s)"
     /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
