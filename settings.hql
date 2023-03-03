@@ -14,3 +14,14 @@ set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
 set tez.grouping.max-size=134217728;
 set hive.vectorized.execution.enabled=false;
+SET hive.vector.mapjoin.max.memory.usage=0.5;
+SET mapreduce.map.memory.mb=8192;
+SET mapreduce.reduce.memory.mb=8192;
+SET hive.auto.convert.join.noconditionaltask.size=1024;
+SET hive.stats.fetch.bitvector=true;
+SET hive.auto.convert.join.noconditionaltask=false;
+SET hive.vectorized.execution.mapjoin.native.fast.hashtable.enabled=false;
+SET hive.vectorized.execution.mapjoin.native.multikey.only.enabled=false;
+SET hive.compute.query.using.stats=false;
+SET hive.vectorized.execution.enabled=false;
+
