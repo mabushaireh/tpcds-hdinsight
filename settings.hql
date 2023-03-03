@@ -14,7 +14,6 @@ set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
 set tez.grouping.max-size=134217728;
 set hive.vectorized.execution.enabled=false;
-SET hive.vector.mapjoin.max.memory.usage=0.5;
 SET mapreduce.map.memory.mb=8192;
 SET mapreduce.reduce.memory.mb=8192;
 SET hive.auto.convert.join.noconditionaltask.size=1024;
