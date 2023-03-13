@@ -14,4 +14,4 @@ set hive.stats.autogather=false;
 set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
 set hive.cbo.enable=false;
- 
+set hive.vectorized.execution.enabled=false; 
