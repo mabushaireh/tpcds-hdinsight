@@ -113,7 +113,9 @@ else
   #/usr/bin/hive -n "" -p "" -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
   #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
-  
+  echo "Analyze External Tables!"
+  #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
+
   
   echo "Create Parquet Tables!"
   #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
