@@ -15,3 +15,4 @@ set hive.stats.column.autogather=false;
 set hive.metastore.dml.events=false;
 set hive.cbo.enable=false;
 set hive.vectorized.execution.enabled=false; 
+set dfs.datanode.max.xcievers=4096;
