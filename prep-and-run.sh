@@ -114,7 +114,7 @@ else
   echo "Create External Tables!"
   #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze External Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
+  #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
 
   
   echo "Create Parquet Tables!"

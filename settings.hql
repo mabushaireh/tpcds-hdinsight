@@ -1,11 +1,11 @@
 set hive.optimize.index.filter=false;
 set hive.exec.orc.split.strategy=BI;
-set hive.tez.container.size=62768;
-set hive.tez.java.opts=-Xmx46214m;
-set tez.runtime.io.sort.mb=16192;
-set tez.task.resource.memory.mb=62768;
-set tez.am.resource.memory.mb=62768;
-set tez.am.launch.cmd-opts=-Xmx46214m;
+set hive.tez.container.size=82768;
+set hive.tez.java.opts=-Xmx86214m;
+set tez.runtime.io.sort.mb=26192;
+set tez.task.resource.memory.mb=82768;
+set tez.am.resource.memory.mb=82768;
+set tez.am.launch.cmd-opts=-Xmx66214m;
 set hive.auto.convert.join=false;
 set hive.exec.max.dynamic.partitions.pernode=5000;
 set mapreduce.task.timeout=360000000;
