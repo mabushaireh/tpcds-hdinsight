@@ -34,4 +34,4 @@ if [ $CLUSTER_NAME = "" ]; then
     read -sp 'Ambari Password: ' AMBARI_PASSWORD
     echo ""
 fi
-sshpass -p $SSH_PASSWORD ssh $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" $CLUSTER_NAME $AMBARI_USER $AMBARI_PASSWORD $IS_ESP $SSH_USER <./prep-and-run.sh
+sshpass -vvv -p $SSH_PASSWORD ssh $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" $CLUSTER_NAME $AMBARI_USER $AMBARI_PASSWORD $IS_ESP $SSH_USER <./prep-and-run.sh
