@@ -113,23 +113,23 @@ else
   #/usr/bin/hive -n "" -p "" -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
   #/usr/bin/hive -n "" -p "" -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Analyze External Tables!"
-  /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
+  #echo "Analyze External Tables!"
+  #/usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
 
   
   echo "Create Parquet Tables!"
-  #/usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Parquet Tables!"
-  #/usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
 
   echo "Run Queries Parquet Tables!"
-  #for f in queries/*.sql; do for i in {1..1}; do
-  #  STARTTIME="$(date +%s)"
-  #  /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
-  #  SUCCESS=$?
-  #  ENDTIME="$(date +%s)"
-  #  echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet.csv
-  #done; done
+  for f in queries/*.sql; do for i in {1..1}; do
+    STARTTIME="$(date +%s)"
+    /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+    SUCCESS=$?
+    ENDTIME="$(date +%s)"
+    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet.csv
+  done; done
 
 
 
