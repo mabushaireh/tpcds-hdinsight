@@ -1,4 +1,6 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
+
 
 with
     ssales

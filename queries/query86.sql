@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select sum(ws_net_paid) as total_sum 
     , i_category 

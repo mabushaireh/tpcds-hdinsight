@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select dt.d_year
     ,item.i_brand_id brand_id

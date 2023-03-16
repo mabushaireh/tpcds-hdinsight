@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select a.ca_state state
     , count(*) cnt

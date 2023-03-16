@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select sum(ws_ext_discount_amt) as `Excess Discount Amount` 
 from web_sales 

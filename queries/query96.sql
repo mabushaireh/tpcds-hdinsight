@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select  count(*) as c
 from store_sales

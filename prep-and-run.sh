@@ -52,8 +52,6 @@ echo "IS_ESP is set to $IS_ESP"
 echo "EXECUTE_QUERY is set to $EXECUTE_QUERY"
 echo "GENERATE_TABLES is set to $GENERATE_TABLES"
 
-
-
 echo "Create Directories"
 if [ -d "repos" ]; then
   echo "Directory repos exists."
@@ -161,13 +159,24 @@ if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
 
   if [[ "$EXECUTE_QUERY" == "Y" ]]; then
     echo "Run Queries Parquet Tables!"
-    for f in queries/*.sql; do for i in {1..$QUERY_COUNT}; do
+    STAT_FILE=times_Parquet_$(date '+%Y%m%d_%H%M%S').csv
+
+    for f in queries/*.sql; do for i in {1..1}; do
       STARTTIME="$(date +%s)"
-      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+      echo "Running query $f"
+      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=Parquet_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
       SUCCESS=$?
       ENDTIME="$(date +%s)"
-      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet_$(date '+%Y%m%d_%H%M%S').csv
+      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))"
+      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>$STAT_FILE
     done; done
+    Run_FOLDER=Parquet_$(date '+%Y%m%d_%H%M%S')
+    hdfs dfs -mkdir /Runs
+    hdfs dfs -mkdir /Runs/$Run_FOLDER
+    for f in queries/*.out; do
+      hdfs dfs -copyFromLocal $f /Runs/$Run_FOLDER
+    done
+    hdfs dfs -copyFromLocal $STAT_FILE /Runs/$Run_FOLDER
 
   fi
 
@@ -181,13 +190,26 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
 
   if [[ "$EXECUTE_QUERY" == "Y" ]]; then
     echo "Run Queries ORC Tables!"
-    for f in queries/*.sql; do for i in {1..$QUERY_COUNT}; do
+    STAT_FILE=times_orc_$(date '+%Y%m%d_%H%M%S').csv
+    for f in queries/*.sql; do for i in {1..1}; do
+      echo "Running query $f"
+
       STARTTIME="$(date +%s)"
-      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=ORC_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
       SUCCESS=$?
       ENDTIME="$(date +%s)"
-      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc_$(date '+%Y%m%d_%H%M%S').csv
+      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))"
+      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>$STAT_FILE
     done; done
+
+    Run_FOLDER=ORC_$(date '+%Y%m%d_%H%M%S')
+    hdfs dfs -mkdir /Runs
+    hdfs dfs -mkdir /Runs/$Run_FOLDER
+    for f in queries/*.out; do
+      hdfs dfs -copyFromLocal $f /Runs/$Run_FOLDER
+    done
+    hdfs dfs -copyFromLocal $STAT_FILE /Runs/$Run_FOLDER
+
   fi
 
 else

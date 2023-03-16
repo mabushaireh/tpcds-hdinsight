@@ -1,4 +1,5 @@
 USE ${hivevarDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select sum(cs_ext_discount_amt) as `excess discount amount` 
 from catalog_sales

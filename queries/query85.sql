@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select substr(r_reason_desc,1,20) as r
     ,avg(ws_quantity) wq

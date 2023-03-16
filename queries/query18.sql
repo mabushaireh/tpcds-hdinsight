@@ -1,4 +1,5 @@
 USE ${hivevarORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select  i_item_id,
     ca_country,

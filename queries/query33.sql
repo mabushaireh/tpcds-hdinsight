@@ -1,4 +1,5 @@
 USE ${hivevarDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 with
   ss

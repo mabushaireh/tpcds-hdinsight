@@ -1,4 +1,5 @@
-USE ${hivevar
+USE ${hivevarBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select i_item_desc 
     ,i_category 

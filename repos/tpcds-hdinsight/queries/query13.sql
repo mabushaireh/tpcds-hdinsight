@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select avg(ss_quantity)
        , avg(ss_ext_sales_price)

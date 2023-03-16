@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select c_customer_id as customer_id 
     ,c_last_name || ', ' || c_first_name as customername 

@@ -1,5 +1,7 @@
 USE ${hivevar:ORCDBNAME};
 
+set hive.query.name=${hivevar:QUERY};
+
 with
     customer_total_return
     as

@@ -1,4 +1,5 @@
 USE ${hivevarAME};
+set hive.query.name=${hivevar:QUERY};
 
 select c_last_name 
     , c_first_name 

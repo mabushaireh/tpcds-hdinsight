@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select sum(ss_net_profit)/sum(ss_ext_sales_price) as gross_margin 
     , i_category 

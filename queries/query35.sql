@@ -1,4 +1,5 @@
 USE ${hivevarORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select ca_state
     , cd_gender

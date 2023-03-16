@@ -1,4 +1,5 @@
 USE ${hivevar:ORCDBNAME};
+set hive.query.name=${hivevar:QUERY};
 
 select substr(w_warehouse_name,1,20) ss 
     , sm_type 
