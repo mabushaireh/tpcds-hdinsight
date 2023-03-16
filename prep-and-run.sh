@@ -106,13 +106,13 @@ EOF
   echo "going back to normal user"
   whoami
 else
-  echo "Cleanup storage Data!"
-  hdfs dfs -rm -f -R /HiveTPCDS/
-  hdfs dfs -rm -f -R /tmp/resources
-  echo "upload needed resources!"
-  hdfs dfs -mkdir /HiveTPCDS
-  hdfs dfs -copyFromLocal resources /tmp/resources
-  hdfs dfs -ls /tmp/resources
+  #echo "Cleanup storage Data!"
+  #hdfs dfs -rm -f -R /HiveTPCDS/
+  #hdfs dfs -rm -f -R /tmp/resources
+  #echo "upload needed resources!"
+  #hdfs dfs -mkdir /HiveTPCDS
+  #hdfs dfs -copyFromLocal resources /tmp/resources
+  #hdfs dfs -ls /tmp/resources
   
 
 
