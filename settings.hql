@@ -16,3 +16,4 @@ set hive.load.dynamic.partitions.thread=100;
 set hive.cbo.enable=true;
 set hive.vectorized.execution.enabled=true; 
 --set dfs.datanode.max.xcievers=4096;
+set hive.server2.enable.doAs=false;
