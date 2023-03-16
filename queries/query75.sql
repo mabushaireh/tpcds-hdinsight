@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 WITH all_sales AS 
 (

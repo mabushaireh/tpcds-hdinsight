@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 select ca_zip
     , ca_county

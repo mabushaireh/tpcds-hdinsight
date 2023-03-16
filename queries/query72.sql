@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 select i_item_desc
     ,w_warehouse_name

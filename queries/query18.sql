@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevarORCDBNAME};
 
 select  i_item_id,
     ca_country,

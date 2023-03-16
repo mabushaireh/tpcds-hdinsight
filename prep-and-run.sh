@@ -5,7 +5,7 @@ WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduc
 FORMAt=None
 
 #Params
-while getopts ":f:c:h:u:p:s:" opt; do
+while getopts ":f:c:h:u:p:s:q:g:" opt; do
   case ${opt} in
   f)
     echo "$OPTARG"
@@ -25,6 +25,12 @@ while getopts ":f:c:h:u:p:s:" opt; do
     ;;
   s)
     IS_ESP=$OPTARG
+    ;;
+  q)
+    EXECUTE_QUERY=$OPTARG
+    ;;
+  g)
+    GENERATE_TABLES=$OPTARG
     ;;
   \?)
     echo "Invalid option: -$OPTARG" 1>&2
@@ -140,34 +146,45 @@ if [ $CLEANUP = 'Y' ]; then
 fi
 
 if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
-  echo "Create Parquet Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Analyze Parquet Tables!"
-  /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
+  if [[ "$GENERATE_TABLES" == "Y" ]]; then
+    echo "Create Parquet Tables!"
+    /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
+    echo "Analyze Parquet Tables!"
+    /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
 
-  echo "Run Queries Parquet Tables!"
-  for f in queries/*.sql; do for i in {1..1}; do
-    STARTTIME="$(date +%s)"
-    /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
-    SUCCESS=$?
-    ENDTIME="$(date +%s)"
-    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet.csv
-  done; done
+  fi
+
+  if [[ "$EXECUTE_QUERY" == "Y" ]]; then
+    echo "Run Queries Parquet Tables!"
+    for f in queries/*.sql; do for i in {1..1}; do
+      STARTTIME="$(date +%s)"
+      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+      SUCCESS=$?
+      ENDTIME="$(date +%s)"
+      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet_$(date '+%Y%m%d_%H%M%S').csv
+    done; done
+
+  fi
 
 elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
-  echo "Create ORC Tables!"
-  /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Analyze ORC Tables!"
-  /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_ORC_$(date '+%Y%m%d_%H%M%S')
+  if [[ "$GENERATE_TABLES" == "Y" ]]; then
+    echo "Create ORC Tables!"
+    /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
+    echo "Analyze ORC Tables!"
+    /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_ORC_$(date '+%Y%m%d_%H%M%S')
+  fi
 
-  echo "Run Queries ORC Tables!"
-  for f in queries/*.sql; do for i in {1..1}; do
-    STARTTIME="$(date +%s)"
-    /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
-    SUCCESS=$?
-    ENDTIME="$(date +%s)"
-    echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
-  done; done
+  if [[ "$EXECUTE_QUERY" == "Y" ]]; then
+    echo "Run Queries ORC Tables!"
+    for f in queries/*.sql; do for i in {1..1}; do
+      STARTTIME="$(date +%s)"
+      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+      SUCCESS=$?
+      ENDTIME="$(date +%s)"
+      echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc_$(date '+%Y%m%d_%H%M%S').csv
+    done; done
+  fi
+
 else
   echo "Invalid format"
 fi

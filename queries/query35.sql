@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevarORCDBNAME};
 
 select ca_state
     , cd_gender

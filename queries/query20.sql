@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar
 
 select i_item_desc 
     ,i_category 

@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 select avg(ss_quantity)
        , avg(ss_ext_sales_price)

@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevarBNAME};
 
 select i_brand_id brand_id
 	, i_brand brand

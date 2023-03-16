@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 select sum(ss_net_profit)/sum(ss_ext_sales_price) as gross_margin 
     , i_category 

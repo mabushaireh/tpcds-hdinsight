@@ -1,4 +1,4 @@
-USE ${hiveconf:ORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 
 select count(distinct cs_order_number) as `order count` 
     ,sum(cs_ext_ship_cost) as `total shipping cost` 
