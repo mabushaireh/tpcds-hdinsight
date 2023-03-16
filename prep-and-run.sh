@@ -48,6 +48,10 @@ echo "CLUSTER_NAME is set to $CLUSTER_NAME"
 echo "AMBARI_USER is set to $AMBARI_USER"
 echo "AMBARI_PASSWORD is set to ****"
 echo "IS_ESP is set to $IS_ESP"
+echo "EXECUTE_QUERY is set to $EXECUTE_QUERY"
+echo "GENERATE_TABLES is set to $GENERATE_TABLES"
+
+
 
 echo "Create Directories"
 if [ -d "repos" ]; then
