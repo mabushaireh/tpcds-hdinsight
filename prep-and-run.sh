@@ -113,6 +113,8 @@ else
   hdfs dfs -mkdir /HiveTPCDS
   hdfs dfs -copyFromLocal resources /tmp
   sleep 10
+  hdfs dfs -ls /tmp
+  
 
 
   echo "Generate Data!"
