@@ -6,7 +6,6 @@ FORMAt=None
 
 #Params
 while getopts ":f:c:h:u:p:s:" opt; do
-  echo $OPTARG
   case ${opt} in
   f)
     echo "$OPTARG"
@@ -44,9 +43,7 @@ echo "AMBARI_USER is set to $AMBARI_USER"
 echo "AMBARI_PASSWORD is set to ****"
 echo "IS_ESP is set to $IS_ESP"
 
-#Constants
 echo "Create Directories"
-
 if [ -d "repos" ]; then
   echo "Directory repos exists."
 else
