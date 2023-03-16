@@ -106,12 +106,15 @@ EOF
   echo "going back to normal user"
   whoami
 else
+  echo "Cleanup storage Data!"
 
   hdfs dfs -rm -f -R /HiveTPCDS/
   hdfs dfs -mkdir /HiveTPCDS
   hdfs dfs -rm -f -R /tmp
+
   hdfs dfs -copyFromLocal resources /tmp
-  
+  sleep 10
+
 
   echo "Generate Data!"
   /usr/bin/hive -n "" -p "" -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
