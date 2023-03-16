@@ -12,23 +12,41 @@ AMBARI_PASSWORD=$3
 IS_ESP=$4
 SSH_USER=$5
 
-# check if the 6 parameter is empty
-if [ -z "$6" ]; then
-  # if it's empty, set the variable to the default value
-  CLEANUP='N'
-else
-  # if it's not empty, set the variable to the parameter value
-  CLEANUP="$6"
-fi
-echo "CLEANUP is set to $CLEANUP"
-
-if [ -z "$7" ]; then
-  FORMAT="ALL"
-else
-  FORMAT="$7"
-fi
+while getopts ":f:" opt; do
+  case ${opt} in
+    f )
+      FORMAT=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+    : )
+      echo "Option -$OPTARG requires an argument." 1>&2
+      exit 1
+      ;;
+  esac
+done
 
 echo "FORMAT is set to $FORMAT"
+
+while getopts ":c:" opt; do
+  case ${opt} in
+    f )
+      CLEANUP=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+    : )
+      echo "Option -$OPTARG requires an argument." 1>&2
+      exit 1
+      ;;
+  esac
+done
+
+echo "CLEANUP is set to $CLEANUP"
 
 #Constants
 echo "Create Directories"
