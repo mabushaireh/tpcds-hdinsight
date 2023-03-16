@@ -1,48 +1,50 @@
 #!/bin/bash
-echo $@
+
 SLEEP_SEC=10
 WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
-FORMAt=None
 
 #Params
-while getopts ":f:c:h:u:p:s:" opt; do
-  echo $OPTARG
+CLUSTER_NAME=$1
+AMBARI_USER=$2
+AMBARI_PASSWORD=$3
+IS_ESP=$4
+SSH_USER=$5
+
+while getopts ":f:" opt; do
   case ${opt} in
-  f)
-    echo "$OPTARG"
-    FORMAT=$OPTARG
-    ;;
-  c)
-    CLEANUP=$OPTARG
-    ;;
-  h)
-    CLUSTER_NAME=$OPTARG
-    ;;
-  u)
-    AMBARI_USER=$OPTARG
-    ;;
-  p)
-    AMBARI_PASSWORD=$OPTARG
-    ;;
-  s)
-    IS_ESP=$OPTARG
-    ;;
-  \?)
-    echo "Invalid option: -$OPTARG" 1>&2
-    exit 1
-    ;;
-  :)
-    echo "Option -$OPTARG requires an argument." 1>&2
-    exit 1
-    ;;
+    f )
+      FORMAT=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+    : )
+      echo "Option -$OPTARG requires an argument." 1>&2
+      exit 1
+      ;;
   esac
 done
 
 echo "FORMAT is set to $FORMAT"
-echo "CLUSTER_NAME is set to $CLUSTER_NAME"
-echo "AMBARI_USER is set to $AMBARI_USER"
-echo "AMBARI_PASSWORD is set to ****"
-echo "IS_ESP is set to $IS_ESP"
+
+while getopts ":c:" opt; do
+  case ${opt} in
+    f )
+      CLEANUP=$OPTARG
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+    : )
+      echo "Option -$OPTARG requires an argument." 1>&2
+      exit 1
+      ;;
+  esac
+done
+
+echo "CLEANUP is set to $CLEANUP"
 
 #Constants
 echo "Create Directories"
