@@ -107,9 +107,9 @@ EOF
   whoami
 else
 
-  hdfs dfs -rm -f -R /HiveTPCDS
+  hdfs dfs -rm -f -R /HiveTPCDS/
+  hdfs dfs -mkdir /HiveTPCDS
   hdfs dfs -rm -f -R /tmp
-  
   hdfs dfs -copyFromLocal resources /tmp
   
 
