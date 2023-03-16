@@ -7,6 +7,8 @@ SSH_USER=$3
 SSH_PASSWORD=$4
 AMBARI_USER=$5
 AMBARI_PASSWORD=$6
+PORT=$9
+
 
 if [ $CLUSTER_NAME = "" ]; then
     read -p 'Cluster DNS Name: ' CLUSTER_NAME
@@ -34,4 +36,4 @@ if [ $CLUSTER_NAME = "" ]; then
     read -sp 'Ambari Password: ' AMBARI_PASSWORD
     echo ""
 fi
-sshpass -vvv -p $SSH_PASSWORD ssh $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" --  <./prep-and-run.sh -f $7 -c $8 -h $CLUSTER_NAME -u $AMBARI_USER -p $AMBARI_PASSWORD -s $IS_ESP
+sshpass -p $SSH_PASSWORD ssh -p $PORT $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" --  <./prep-and-run.sh -f $7 -c $8 -h $CLUSTER_NAME -u $AMBARI_USER -p $AMBARI_PASSWORD -s $IS_ESP
