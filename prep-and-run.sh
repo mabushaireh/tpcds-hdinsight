@@ -107,6 +107,8 @@ else
 fi
 
 if [ $IS_ESP = 'Y' ]; then
+  echo "IS_ESP already applied! $IS_ESP"
+
 fi
 
 if [ $CLEANUP = 'Y' ]; then
