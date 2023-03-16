@@ -1,16 +1,36 @@
 #!/bin/bash
 
-#Variables
+CLEANUP='N'
+FORMAT='ALL'
+SLEEP_SEC=10
+WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
+
+#Params
 CLUSTER_NAME=$1
 AMBARI_USER=$2
 AMBARI_PASSWORD=$3
 IS_ESP=$4
 SSH_USER=$5
 
-#Constants
-SLEEP_SEC=10
-WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
+# check if the 6 parameter is empty
+if [ -z "$6" ]; then
+  # if it's empty, set the variable to the default value
+  CLEANUP='N'
+else
+  # if it's not empty, set the variable to the parameter value
+  CLEANUP="$6"
+fi
+echo "CLEANUP is set to $CLEANUP"
 
+if [ -z "$7" ]; then
+  FORMAT="ALL"
+else
+  FORMAT="$7"
+fi
+
+echo "FORMAT is set to $FORMAT"
+
+#Constants
 echo "Create Directories"
 
 if [ -d "repos" ]; then
@@ -86,44 +106,27 @@ else
   echo "Whiteliest already applied!"
 fi
 
-echo "Copy resources files to hdf tmp folder!"
 if [ $IS_ESP = 'Y' ]; then
-  sudo -i -u hive bash <<EOF
-  whoami
-  echo "Switch to hive user, this is ESP cluster"
-  cd /home/$SSH_USER/repos/tpcds-hdinsight
-  hdfs dfs -copyFromLocal resources /tmp
-  echo "Generate Data!"
-  #/usr/bin/hive -i settings.hql -f TPCDSDataGen.hql -hivevar SCALE=2 -hivevar PARTS=20 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
- echo "Create External Tables!"
-  #/usr/bin/hive -i settings.hql -f ddl/createAllExternalTables.hql --hivevar LOCATION=/HiveTPCDS/ --hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Create ORC Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/createAllORCTables.hql --hivevar ORCDBNAME=tpcds_orc --hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
-  echo "Analyze Tables!"
-  /usr/bin/hive -i settings.hql -f ddl/analyze.hql --hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_$(date '+%Y%m%d_%H%M%S')
+fi
 
-EOF
-  echo "going back to normal user"
-  whoami
-else
-  #echo "Cleanup storage Data!"
-  #hdfs dfs -rm -f -R /HiveTPCDS/
-  #hdfs dfs -rm -f -R /tmp/resources
-  #echo "upload needed resources!"
-  #hdfs dfs -mkdir /HiveTPCDS
-  #hdfs dfs -copyFromLocal resources /tmp/resources
-  #hdfs dfs -ls /tmp/resources
-  
-
+if [ $CLEANUP = 'Y' ]; then
+  echo "Cleanup storage Data!"
+  hdfs dfs -rm -f -R /HiveTPCDS/
+  hdfs dfs -rm -f -R /tmp/resources
+  echo "Copy resources files to hdf tmp folder!"
+  hdfs dfs -mkdir /HiveTPCDS
+  hdfs dfs -copyFromLocal resources /tmp/resources
+  hdfs dfs -ls /tmp/resources
 
   echo "Generate Data!"
-  #/usr/bin/hive -n "" -p "" -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
-  #/usr/bin/hive -n "" -p "" -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze External Tables!"
-  #/usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
+fi
 
-  
+if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
   echo "Create Parquet Tables!"
   /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze Parquet Tables!"
@@ -138,8 +141,7 @@ else
     echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_parquet.csv
   done; done
 
-
-
+elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
   echo "Create ORC Tables!"
   /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze ORC Tables!"
@@ -153,4 +155,6 @@ else
     ENDTIME="$(date +%s)"
     echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))" >>times_orc.csv
   done; done
+else
+  echo "Invalid format"
 fi
