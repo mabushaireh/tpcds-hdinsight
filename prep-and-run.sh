@@ -108,12 +108,11 @@ EOF
 else
   echo "Cleanup storage Data!"
   hdfs dfs -rm -f -R /HiveTPCDS/
-  hdfs dfs -rm -f -R /tmp
+  hdfs dfs -rm -f -R /tmp/resources
   echo "upload needed resources!"
   hdfs dfs -mkdir /HiveTPCDS
-  hdfs dfs -copyFromLocal resources /tmp
-  sleep 10
-  hdfs dfs -ls /tmp
+  hdfs dfs -copyFromLocal resources /tmp/resources
+  hdfs dfs -ls /tmp/resources
   
 
 
