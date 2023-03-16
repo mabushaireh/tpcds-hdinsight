@@ -1,6 +1,7 @@
 #!/bin/bash
 echo $@
 SLEEP_SEC=10
+QUERY_COUNT=1
 WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
 FORMAt=None
 
@@ -160,7 +161,7 @@ if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
 
   if [[ "$EXECUTE_QUERY" == "Y" ]]; then
     echo "Run Queries Parquet Tables!"
-    for f in queries/*.sql; do for i in {1..1}; do
+    for f in queries/*.sql; do for i in {1..$QUERY_COUNT}; do
       STARTTIME="$(date +%s)"
       /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
       SUCCESS=$?
@@ -180,7 +181,7 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
 
   if [[ "$EXECUTE_QUERY" == "Y" ]]; then
     echo "Run Queries ORC Tables!"
-    for f in queries/*.sql; do for i in {1..1}; do
+    for f in queries/*.sql; do for i in {1..$QUERY_COUNT}; do
       STARTTIME="$(date +%s)"
       /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
       SUCCESS=$?
