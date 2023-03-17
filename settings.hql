@@ -18,7 +18,7 @@ set hive.vectorized.execution.enabled=true;
 set hive.cbo.returnpath.hiveop=true;
 set hive.compute.query.using.stats=false;
 set hive.enforce.bucketing=false;
-set hive.exec.dynamic.partition.mode=strict;
+set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.compactor.initiator.on=false;
 set hive.compactor.worker.threads=0;
 
