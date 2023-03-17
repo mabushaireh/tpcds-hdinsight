@@ -16,3 +16,4 @@
 --set hive.cbo.enable=true;
 --set hive.vectorized.execution.enabled=true; 
 set hive.cbo.returnpath.hiveop=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
