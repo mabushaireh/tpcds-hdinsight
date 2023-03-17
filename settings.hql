@@ -18,7 +18,6 @@ set hive.vectorized.execution.enabled=true;
 set hive.cbo.returnpath.hiveop=true;
 set hive.compute.query.using.stats=false;
 set hive.support.concurrency=false;
-set hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DummyTxnManager;
 set hive.enforce.bucketing=false;
 set hive.exec.dynamic.partition.mode=strict;
 set hive.compactor.initiator.on=false;
