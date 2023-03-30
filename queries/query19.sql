@@ -1,4 +1,4 @@
-USE ${hivevarBNAME};
+USE ${hivevar:ORCDBNAME};
 set hive.query.name=${hivevar:QUERY};
 
 select i_brand_id brand_id
