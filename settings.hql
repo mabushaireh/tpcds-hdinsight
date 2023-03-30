@@ -20,3 +20,6 @@ set hive.compute.query.using.stats=false;
 set hive.enforce.bucketing=false;
 set hive.exec.dynamic.partition.mode=nonstrict;
 set hive.execution.engine=spark;
+set spark.executor.memory=4g;
+set yarn.nodemanager.resource.memory-mb=12288;
+set yarn.scheduler.maximum-allocation-mb=2048;
