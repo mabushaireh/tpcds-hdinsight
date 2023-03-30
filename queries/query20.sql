@@ -1,4 +1,4 @@
-USE ${hivevarBNAME};
+USE ${hivevar:ORCDBNAME};
 set hive.query.name=${hivevar:QUERY};
 
 select i_item_desc 
