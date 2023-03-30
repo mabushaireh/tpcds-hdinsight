@@ -1,4 +1,4 @@
-USE ${hivevarAME};
+USE ${hivevar:ORCDBNAME};
 set hive.query.name=${hivevar:QUERY};
 
 select c_last_name 

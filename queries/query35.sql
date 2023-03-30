@@ -1,4 +1,4 @@
-USE ${hivevarORCDBNAME};
+USE ${hivevar:ORCDBNAME};
 set hive.query.name=${hivevar:QUERY};
 
 select ca_state
