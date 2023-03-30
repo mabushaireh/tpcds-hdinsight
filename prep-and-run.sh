@@ -4,9 +4,10 @@ SLEEP_SEC=10
 QUERY_COUNT=1
 WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
 FORMAt=None
+LIMIT=100
 
 #Params
-while getopts ":f:c:h:u:p:s:q:g:" opt; do
+while getopts ":f:c:h:u:p:s:q:g:l:" opt; do
   case ${opt} in
   f)
     echo "$OPTARG"
@@ -33,6 +34,9 @@ while getopts ":f:c:h:u:p:s:q:g:" opt; do
   g)
     GENERATE_TABLES=$OPTARG
     ;;
+  l)
+    LIMIT=$OPTARG
+    ;;
   \?)
     echo "Invalid option: -$OPTARG" 1>&2
     exit 1
@@ -51,6 +55,7 @@ echo "AMBARI_PASSWORD is set to ****"
 echo "IS_ESP is set to $IS_ESP"
 echo "EXECUTE_QUERY is set to $EXECUTE_QUERY"
 echo "GENERATE_TABLES is set to $GENERATE_TABLES"
+echo "LIMIT is set to $LIMIT"
 
 echo "Create Directories"
 if [ -d "repos" ]; then
@@ -161,7 +166,15 @@ if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
     echo "Run Queries Parquet Tables!"
     STAT_FILE=times_Parquet_$(date '+%Y%m%d_%H%M%S').csv
 
+    #stop loop when limit is reached
+    count=1
     for f in queries/*.sql; do for i in {1..1}; do
+      if [ $count -gt $LIMIT ]; then
+        break
+      fi
+      echo "count is $count"
+
+     ((count++))
       STARTTIME="$(date +%s)"
       echo "Running query $f"
       /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=Parquet_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
@@ -191,7 +204,14 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
   if [[ "$EXECUTE_QUERY" == "Y" ]]; then
     echo "Run Queries ORC Tables!"
     STAT_FILE=times_orc_$(date '+%Y%m%d_%H%M%S').csv
+    count=1
     for f in queries/*.sql; do for i in {1..1}; do
+      if [ $count -gt $LIMIT ]; then
+        #if limit is reached, stop loop
+        break
+      fi
+      echo "count is $count"
+     ((count++))
       echo "Running query $f"
 
       STARTTIME="$(date +%s)"
