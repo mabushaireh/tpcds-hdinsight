@@ -8,7 +8,7 @@ LIMIT=100
 SKIP=0
 
 #Params
-while getopts ":f:c:h:u:p:s:q:g:l:ss:" opt; do
+while getopts ":f:c:h:u:p:s:q:g:l:k:" opt; do
   case ${opt} in
   f)
     echo "$OPTARG"
@@ -38,7 +38,7 @@ while getopts ":f:c:h:u:p:s:q:g:l:ss:" opt; do
   l)
     LIMIT=$OPTARG
     ;;
-  ss)
+  k)
     SKIP=$OPTARG
     ;;
   \?)
@@ -60,6 +60,7 @@ echo "IS_ESP is set to $IS_ESP"
 echo "EXECUTE_QUERY is set to $EXECUTE_QUERY"
 echo "GENERATE_TABLES is set to $GENERATE_TABLES"
 echo "LIMIT is set to $LIMIT"
+echo "SKIP is set to $SKIP"
 
 echo "Create Directories"
 if [ -d "repos" ]; then
@@ -213,6 +214,7 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
     for f in queries/*.sql; do for i in {1..1}; do
       if [ $startAt -lt $SKIP ]; then
         ((startAt++))
+        echo "startAt is $startAt"
         continue
       fi
       if [ $count -gt $LIMIT ]; then
