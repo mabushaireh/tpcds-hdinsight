@@ -19,4 +19,4 @@ set hive.cbo.returnpath.hiveop=true;
 set hive.compute.query.using.stats=false;
 set hive.enforce.bucketing=false;
 set hive.exec.dynamic.partition.mode=nonstrict;
-
+set hive.execution.engine=spark;

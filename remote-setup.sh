@@ -41,4 +41,5 @@ if [ $CLUSTER_NAME = "" ]; then
     read -sp 'Ambari Password: ' AMBARI_PASSWORD
     echo ""
 fi
+
 sshpass -p $SSH_PASSWORD ssh -p $PORT $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" --  <./prep-and-run.sh -f $FORMAT -c $CLEANUP -h $CLUSTER_NAME -u $AMBARI_USER -p $AMBARI_PASSWORD -s $IS_ESP -q $EXECUTE_QUERY -g $GGENERATE_TABLE
