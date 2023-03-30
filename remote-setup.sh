@@ -13,6 +13,7 @@ PORT=$9
 EXECUTE_QUERY=${10}
 GGENERATE_TABLE=${11}
 LIMIT=${12}
+SKIP=${13}
 
 
 if [ $CLUSTER_NAME = "" ]; then
@@ -42,4 +43,4 @@ if [ $CLUSTER_NAME = "" ]; then
     echo ""
 fi
 
-sshpass -p $SSH_PASSWORD ssh -p $PORT $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" --  <./prep-and-run.sh -f $FORMAT -c $CLEANUP -h $CLUSTER_NAME -u $AMBARI_USER -p $AMBARI_PASSWORD -s $IS_ESP -q $EXECUTE_QUERY -g $GGENERATE_TABLE -l $LIMIT
+sshpass -p $SSH_PASSWORD ssh -p $PORT $SSH_USER@$CLUSTER_NAME-ssh.azurehdinsight.net "bash -s" --  <./prep-and-run.sh -f $FORMAT -c $CLEANUP -h $CLUSTER_NAME -u $AMBARI_USER -p $AMBARI_PASSWORD -s $IS_ESP -q $EXECUTE_QUERY -g $GGENERATE_TABLE -l $LIMIT -ss $SKIP

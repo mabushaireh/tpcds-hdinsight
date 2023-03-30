@@ -5,9 +5,10 @@ QUERY_COUNT=1
 WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduce.task.timeout|hive.load.dynamic.partitions.thread|hive.stats.autogather|hive.stats.column.autogather|hive.metastore.dml.events|hive.tez.java.opts|hive.tez.container.size|tez.runtime.io.sort.mb|tez.runtime.unordered.output.buffer.size-mb|tez.grouping.max-size|tez.grouping.min-size|hive.query.name"
 FORMAt=None
 LIMIT=100
+SKIP=0
 
 #Params
-while getopts ":f:c:h:u:p:s:q:g:l:" opt; do
+while getopts ":f:c:h:u:p:s:q:g:l:ss:" opt; do
   case ${opt} in
   f)
     echo "$OPTARG"
@@ -36,6 +37,9 @@ while getopts ":f:c:h:u:p:s:q:g:l:" opt; do
     ;;
   l)
     LIMIT=$OPTARG
+    ;;
+  ss)
+    SKIP=$OPTARG
     ;;
   \?)
     echo "Invalid option: -$OPTARG" 1>&2
@@ -205,7 +209,12 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
     echo "Run Queries ORC Tables!"
     STAT_FILE=times_orc_$(date '+%Y%m%d_%H%M%S').csv
     count=1
+    startAt=0
     for f in queries/*.sql; do for i in {1..1}; do
+      if [ $startAt -lt $SKIP ]; then
+        ((startAt++))
+        continue
+      fi
       if [ $count -gt $LIMIT ]; then
         #if limit is reached, stop loop
         break
