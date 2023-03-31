@@ -1,5 +1,5 @@
---set hive.optimize.index.filter=false;
---set hive.exec.orc.split.strategy=BI;
+set hive.optimize.index.filter=false;
+set hive.exec.orc.split.strategy=BI;
 --set hive.tez.container.size=82768;
 --set hive.tez.java.opts=-Xmx86214m;
 --set tez.runtime.io.sort.mb=26192;
