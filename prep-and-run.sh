@@ -6,6 +6,7 @@ WHITELIST="mapred.reduce.tasks|hive.exec.max.dynamic.partitions.pernode|mapreduc
 FORMAt=None
 LIMIT=100
 SKIP=0
+SCALE=1
 
 #Params
 while getopts ":f:c:h:u:p:s:q:g:l:k:" opt; do
@@ -173,7 +174,7 @@ if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
 
     #stop loop when limit is reached
     count=1
-    for f in queries/*.sql; do for i in {1..1}; do
+    for f in queries/*.$SCALE.sql; do for i in {1..1}; do
       if [ $count -gt $LIMIT ]; then
         break
       fi
@@ -211,7 +212,7 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
     STAT_FILE=times_orc_$(date '+%Y%m%d_%H%M%S').csv
     count=1
     startAt=0
-    for f in queries/*.sql; do for i in {1..1}; do
+    for f in queries/*.$SCALE.sql; do for i in {1..1}; do
       if [ $startAt -lt $SKIP ]; then
         ((startAt++))
         echo "startAt is $startAt"
