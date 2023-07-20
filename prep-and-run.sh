@@ -88,9 +88,13 @@ cd tpcds-hdinsight
 
 config=$(sudo /var/lib/ambari-server/resources/scripts/configs.py -p 8080 -a get -l headnodehost -c hive-site -n $CLUSTER_NAME -k "hive.security.authorization.sqlstd.confwhitelist.append" -u $AMBARI_USER -p "$AMBARI_PASSWORD" | grep $WHITELIST)
 
+
+
 if [ -z "$config" ]; then
   echo "update whitelisted configuration for runtime modify"
   sudo /var/lib/ambari-server/resources/scripts/configs.py -p 8080 -a set -l headnodehost -c hive-site -n $CLUSTER_NAME -k "hive.security.authorization.sqlstd.confwhitelist.append" -v $WHITELIST -u $AMBARI_USER -p "$AMBARI_PASSWORD"
+  sudo /var/lib/ambari-server/resources/scripts/configs.py -p 8080 -a set -l headnodehost -c hive-site -n $CLUSTER_NAME -k "parquet.memory.min.chunk.size" -v "524288" -u $AMBARI_USER -p "$AMBARI_PASSWORD"
+  
   echo "Stop Hive "
   curl -u $AMBARI_USER:$AMBARI_PASSWORD -H "X-Requested-By: ambari" -X PUT -d '{"RequestInfo": {"context" :"STOP HIVE via REST by hive-testBench"}, "Body": {"ServiceInfo": {"state": "INSTALLED"}}}' http://headnodehost:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE
 
@@ -152,19 +156,19 @@ if [ $CLEANUP = 'Y' ]; then
   hdfs dfs -ls /tmp/resources
 
   echo "Generate Data!"
-  /usr/bin/hive -n "" -p "" -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -f TPCDSDataGen.hql -hivevar SCALE=3 -hivevar PARTS=10 -hivevar LOCATION=/HiveTPCDS/ -hivevar TPCHBIN=$(grep -A 1 "fs.defaultFS" /etc/hadoop/conf/core-site.xml | grep -o "abfs[^<]*")/tmp/resources --hivevar QUERY=TPCDSDataGen_$(date '+%Y%m%d_%H%M%S')
   echo "Create External Tables!"
-  /usr/bin/hive -n "" -p "" -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -f ddl/createAllExternalTables.hql -hivevar LOCATION=/HiveTPCDS/ -hivevar DBNAME=tpcds --hivevar QUERY=createAllExternalTables_$(date '+%Y%m%d_%H%M%S')
   echo "Analyze External Tables!"
-  /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
+  /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds --hivevar QUERY=analyze_external_$(date '+%Y%m%d_%H%M%S')
 fi
 
 if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
   if [[ "$GENERATE_TABLES" == "Y" ]]; then
     echo "Create Parquet Tables!"
-    /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
+    /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -i settings.hql -f ddl/createAllParquetTables.hql -hivevar PARQUETDBNAME=tpcds_parquet -hivevar SOURCE=tpcds --hivevar QUERY=createAllParquetTables_$(date '+%Y%m%d_%H%M%S')
     echo "Analyze Parquet Tables!"
-    /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
+    /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=analyze_Parquet_$(date '+%Y%m%d_%H%M%S')
 
   fi
 
@@ -183,7 +187,7 @@ if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
      ((count++))
       STARTTIME="$(date +%s)"
       echo "Running query $f"
-      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=Parquet_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+      /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_parquet --hivevar QUERY=Parquet_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
       SUCCESS=$?
       ENDTIME="$(date +%s)"
       echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))"
@@ -202,9 +206,9 @@ if [[ "$FORMAT" == "ALL" || "$FORMAT" == "Parquet" ]]; then
 elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
   if [[ "$GENERATE_TABLES" == "Y" ]]; then
     echo "Create ORC Tables!"
-    /usr/bin/hive -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
+    /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -i settings.hql -f ddl/createAllORCTables.hql -hivevar ORCDBNAME=tpcds_orc -hivevar SOURCE=tpcds --hivevar QUERY=createAllORCTables_$(date '+%Y%m%d_%H%M%S')
     echo "Analyze ORC Tables!"
-    /usr/bin/hive -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_ORC_$(date '+%Y%m%d_%H%M%S')
+    /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -n "" -p "" -f ddl/analyze.hql -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=analyze_ORC_$(date '+%Y%m%d_%H%M%S')
   fi
 
   if [[ "$EXECUTE_QUERY" == "Y" ]]; then
@@ -227,7 +231,7 @@ elif [[ "$FORMAT" == "ALL" || "$FORMAT" == "ORC" ]]; then
       echo "Running query $f"
 
       STARTTIME="$(date +%s)"
-      /usr/bin/hive -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=ORC_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
+      /usr/bin/hive -u "jdbc:hive2://zk0-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk1-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181,zk5-mas114.ce32grx1nkwevemuf3wjhlo2gh.cx.internal.cloudapp.net:2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2-interactive" -i settings.hql -f $f -hivevar ORCDBNAME=tpcds_orc --hivevar QUERY=ORC_$f.$(date '+%Y%m%d_%H%M%S') >$f.run_$i.out 2>&1
       SUCCESS=$?
       ENDTIME="$(date +%s)"
       echo "$f,$i,$SUCCESS,$STARTTIME,$ENDTIME,$(($ENDTIME - $STARTTIME))"
